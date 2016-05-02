@@ -36,15 +36,21 @@ class Contact
     # Creates a new contact, adding it to the csv file, returning the new contact.
     # @param name [String] the new contact's name
     # @param email [String] the contact's email
-    def create(name, email)
-      # TODO: Instantiate a Contact, add its data to the 'contacts.csv' file, and return it.
+    def create(name, email, phone)
+      CSV.open("contacts.csv", "ab+") do |csv|
+        csv << [name,email,phone]
+      end
+      puts "Thank you! Your contact was added."
     end
     
     # Find the Contact in the 'contacts.csv' file with the matching id.
     # @param id [Integer] the contact id
     # @return [Contact, nil] the contact with the specified id. If no contact has the id, returns nil.
     def find(id)
-      # TODO: Find the Contact in the 'contacts.csv' file with the matching id.
+      id = id.to_i
+      contact = "Sorry, we couldn't find that person."
+      contacts = Contact.all
+      contact = contacts[id-1] unless contacts[id-1].nil?
     end
     
     # Search for contacts by either name or email.
@@ -55,8 +61,4 @@ class Contact
     end
 
   end
-
 end
-
-
-Contact.all

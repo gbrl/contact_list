@@ -35,16 +35,21 @@ class ContactList
     action = gets.chomp
     case action
     when "new"
-      puts "#{action.titleize}ing..."
+      new
     when "list"
       list
     when "show"
-      puts "#{action.titleize}ing..."
+      show
     else
       puts "Sorry, we didn't understand your command. Please try again."
     end
-      
+  end
 
+  def show()
+    puts "Which ID?"
+    id = gets.chomp
+    contact = Contact.find(id)
+    pp contact
   end
 
   def list
@@ -53,6 +58,17 @@ class ContactList
     contacts.each_with_index do |contact,index|
       puts "#{index+1}. #{contact.name} (#{contact.email})"
     end
+    puts "#{contacts.length} records total."
+  end
+
+  def new
+    puts "What's the name of the new contact?"
+    new_name = gets.chomp
+    puts "What's the email of the new contact?"
+    new_email = gets.chomp
+    puts "What's the phone-number of the new contact?"
+    new_phone = gets.chomp
+    new_contact = Contact.create(new_name,new_email,new_phone)
   end
   
 end
