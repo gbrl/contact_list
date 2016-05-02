@@ -1,4 +1,5 @@
 require 'csv'
+require 'pp'
 
 # Represents a person in an address book.
 # The ContactList class will work with Contact objects instead of interacting with the CSV file directly
@@ -9,7 +10,10 @@ class Contact
   # Creates a new contact object
   # @param name [String] The contact's name
   # @param email [String] The contact's email address
-  def initialize(name, email)
+  def initialize(name,email,phone)
+    @name = name
+    @email = email
+    @phone = phone
     # TODO: Assign parameter values to instance variables.
   end
 
@@ -19,7 +23,14 @@ class Contact
     # Opens 'contacts.csv' and creates a Contact object for each line in the file (aka each contact).
     # @return [Array<Contact>] Array of Contact objects
     def all
-      # TODO: Return an Array of Contact instances made from the data in 'contacts.csv'.
+      @return = []
+      contacts = CSV.read('contacts.csv')
+      contacts.each_with_index do |contact,index|
+        next if index == 0
+        new_contact = Contact.new(contact[0],contact[1],contact[2])
+        @return << new_contact
+      end
+      @return
     end
 
     # Creates a new contact, adding it to the csv file, returning the new contact.
@@ -46,3 +57,6 @@ class Contact
   end
 
 end
+
+
+Contact.all
