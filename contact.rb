@@ -5,7 +5,7 @@ require 'pp'
 # The ContactList class will work with Contact objects instead of interacting with the CSV file directly
 class Contact
 
-  attr_accessor :name, :email
+  attr_accessor :name, :email, :phone
   
   # Creates a new contact object
   # @param name [String] The contact's name
@@ -14,10 +14,8 @@ class Contact
     @name = name
     @email = email
     @phone = phone
-    # TODO: Assign parameter values to instance variables.
   end
 
-  # Provides functionality for managing contacts in the csv file.
   class << self
 
     # Opens 'contacts.csv' and creates a Contact object for each line in the file (aka each contact).
@@ -57,7 +55,17 @@ class Contact
     # @param term [String] the name fragment or email fragment to search for
     # @return [Array<Contact>] Array of Contact objects.
     def search(term)
-      # TODO: Select the Contact instances from the 'contacts.csv' file whose name or email attributes contain the search term.
+      contacts = Contact.all
+      person_data = []
+      contacts.each_with_index do |contact,index|
+        if contact.name == term || contact.email == term
+          person_data[0] = index
+          person_data[1] = contact 
+        else 
+          person_data[0] = "Sorry, we couldn't find anyone with that search term."
+        end
+      end
+      person_data
     end
 
   end

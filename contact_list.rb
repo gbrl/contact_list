@@ -40,12 +40,25 @@ class ContactList
       list
     when "show"
       show
+    when "search"
+      search
     else
       puts "Sorry, we didn't understand your command. Please try again."
     end
   end
 
-  def show()
+  def search
+    puts "Which email or name?"
+    term = gets.chomp
+    contact = Contact.search(term)
+    if contact.length > 1
+      puts "#{contact[0]+1}. #{contact[1].name}"
+    else
+      puts contact[0]
+    end
+  end
+
+  def show
     puts "Which ID?"
     id = gets.chomp
     contact = Contact.find(id)
