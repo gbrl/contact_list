@@ -116,6 +116,7 @@ class ContactList
     new_name = STDIN.gets.chomp
     puts "What's the email of the new contact?"
     new_email = STDIN.gets.chomp
+    ContactList.invalid_email unless is_a_valid_email?(new_email)
     puts "What's the phone number of the new contact?"
     new_phone = STDIN.gets.chomp
     puts "Wanna add a secondary phone number? (leave blank for 'no')"
@@ -128,6 +129,17 @@ class ContactList
       puts puts "Your new entry was added. The ID is #{new_id}."
     end
   end  
+
+  def self.invalid_email
+    puts "The email address you entered is invalid."
+    exit
+  end
+
+
+  def is_a_valid_email?(email)
+    (email =~ /\A[\w+\-.]+@[a-z\d\-]+(\.[a-z]+)*\.[a-z]+\z/i)
+  end
+
 end
 
 process_input(ARGV)
