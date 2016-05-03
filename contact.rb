@@ -70,7 +70,6 @@ class Contact
           person_data = []
           person_data[0] = index
           person_data[1] = contact 
-          person_data
         end
       end
       person_data
