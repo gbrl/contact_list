@@ -5,20 +5,22 @@ require 'active_support/all'
 require_relative 'contact'
 require_relative 'color'
 
+def process_input(argv_input)
+  @cli_input = argv_input
+  @action_name = ""
+  @id = nil
+  @search_term = nil
+  @contacts = []
 
-cli_input = ARGV
-@action_name = ""
-@id = nil
-@search_term = nil
-@contacts = []
-
-if cli_input.length > 0 
-  @action_name = cli_input[0] 
-  if @action_name == 'show'
-    @id = cli_input[1]
-  else
-    @search_term = cli_input[1]
+  if @cli_input.length > 0 
+    @action_name = cli_input[0] 
+    if @action_name == 'show'
+      @id = cli_input[1]
+    else
+      @search_term = cli_input[1]
+    end
   end
+  start(@action_name, @id, @search_term)
 end
 
 def start(action,id,search_term)
@@ -48,7 +50,7 @@ class ContactList
   end
 
 
-  def get_action_name()
+  def get_action_name
     puts "What would you like to do?"
     action = gets.chomp
     case action
@@ -82,7 +84,7 @@ class ContactList
     end
   end
 
-  def show()
+  def show
     if @id.nil?
       puts "Which ID?"
       id = STDIN.gets.chomp
@@ -121,8 +123,6 @@ class ContactList
   end  
 end
 
-start(@action_name, @id, @search_term)
-
-
+process_input(ARGV)
 
 # validate email regex /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/
