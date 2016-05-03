@@ -13,11 +13,11 @@ def process_input(argv_input)
   @contacts = []
 
   if @cli_input.length > 0 
-    @action_name = cli_input[0] 
+    @action_name = @cli_input[0] 
     if @action_name == 'show'
-      @id = cli_input[1]
+      @id = @cli_input[1]
     else
-      @search_term = cli_input[1]
+      @search_term = @cli_input[1]
     end
   end
   start(@action_name, @id, @search_term)
@@ -98,6 +98,7 @@ class ContactList
       puts contact.name
       puts contact.email
       puts contact.phone
+      puts contact.second_phone unless contact.second_phone.nil?
     end
   end
 
@@ -115,11 +116,12 @@ class ContactList
     new_name = STDIN.gets.chomp
     puts "What's the email of the new contact?"
     new_email = STDIN.gets.chomp
-    puts "What's the phone-number of the new contact?"
+    puts "What's the phone number of the new contact?"
     new_phone = STDIN.gets.chomp
-    new_contact = Contact.create(new_name,new_email,new_phone)
-    new_id = Contact.all.length
-    puts "Your contact was added. The ID is #{new_id}."
+    puts "Wanna add a secondary phone number? (leave blank for 'no')"
+    second_phone = STDIN.gets.chomp
+    new_contact_response = Contact.create(new_name,new_email,new_phone,second_phone)
+    puts new_contact_response
   end  
 end
 
