@@ -143,5 +143,3 @@ class ContactList
 end
 
 process_input(ARGV)
-
-# validate email regex /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/
