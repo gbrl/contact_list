@@ -3,7 +3,7 @@ require 'pry'
 require 'csv'
 require 'active_support/all'
 require_relative 'contact'
-require_relative 'modules'
+require_relative 'color'
 
 
 cli_input = ARGV
