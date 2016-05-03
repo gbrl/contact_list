@@ -53,10 +53,9 @@ class Contact
     # @return [Contact, nil] the contact with the specified id. If no contact has the id, returns nil.
     def find(id)
       id = id.to_i
-      contact = "Sorry, we couldn't find that person."
+      contact = nil
       contacts = Contact.all
       contact = contacts[id-1] unless contacts[id-1].nil?
-      contact
     end
     
     # Search for contacts by either name or email.

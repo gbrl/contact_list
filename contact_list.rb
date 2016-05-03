@@ -92,8 +92,8 @@ class ContactList
       id = @id
     end
     contact = Contact.find(id)
-    if contact.is_a? String
-      puts contact
+    if contact.nil?
+      puts "Sorry, we couldn't find that person."
     else
       puts contact.name
       puts contact.email
