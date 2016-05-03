@@ -5,14 +5,26 @@ require 'active_support/all'
 require_relative 'contact'
 require_relative 'modules'
 
-def start(action)
-  ContactList.new(action)
+
+cli_input = ARGV
+@action_name = ""
+@id = nil
+@contacts = []
+
+if cli_input.length > 0 
+  @action_name = cli_input[0] 
+  @id = cli_input[1]
+end
+
+def start(action,id)
+  ContactList.new(action,id)
 end
 
 # Interfaces between a user and their contact list. Reads from and writes to standard I/O.
 class ContactList
-  def initialize(action)
+  def initialize(action,id)
     if action.length > 0
+      @id = id
       send(action)
     else
       list_actions
@@ -30,7 +42,7 @@ class ContactList
   end
 
 
-  def get_action_name
+  def get_action_name()
     puts "What would you like to do?"
     action = gets.chomp
     case action
@@ -58,11 +70,15 @@ class ContactList
     end
   end
 
-  def show
-    puts "Which ID?"
-    id = gets.chomp
+  def show()
+    if @id.nil?
+      puts "Which ID?"
+      id = STDIN.gets.chomp
+    else
+      id = @id
+    end
     contact = Contact.find(id)
-    pp contact
+    puts "#{id}. #{contact.name} (#{contact.email})"
   end
 
   def list
@@ -82,15 +98,11 @@ class ContactList
     puts "What's the phone-number of the new contact?"
     new_phone = gets.chomp
     new_contact = Contact.create(new_name,new_email,new_phone)
-  end
-  
+  end  
 end
 
-cli_input = ARGV
-action_name = ""
-action_name = cli_input[0] if cli_input.length > 0 
-@contacts = []
-start(action_name)
+start(@action_name, @id)
+
 
 
 # validate email regex /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/

@@ -24,9 +24,7 @@ class Contact
       @return = []
       contacts = CSV.read('contacts.csv')
       contacts.each_with_index do |contact,index|
-        next if index == 0
-        new_contact = Contact.new(contact[0],contact[1],contact[2])
-        @return << new_contact
+        @return << Contact.new(contact[0],contact[1],contact[2])
       end
       @return
     end
@@ -49,6 +47,7 @@ class Contact
       contact = "Sorry, we couldn't find that person."
       contacts = Contact.all
       contact = contacts[id-1] unless contacts[id-1].nil?
+      contact
     end
     
     # Search for contacts by either name or email.
