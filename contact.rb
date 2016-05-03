@@ -21,12 +21,12 @@ class Contact
     # Opens 'contacts.csv' and creates a Contact object for each line in the file (aka each contact).
     # @return [Array<Contact>] Array of Contact objects
     def all
-      @return = []
-      contacts = CSV.read('contacts.csv')
-      contacts.each_with_index do |contact,index|
-        @return << Contact.new(contact[0],contact[1],contact[2])
+      contacts = []
+      csv_data = CSV.read('contacts.csv')
+      csv_data.each_with_index do |entry,index|
+        contacts << Contact.new(entry[0],entry[1],entry[2])
       end
-      @return
+      contacts
     end
 
     # Creates a new contact, adding it to the csv file, returning the new contact.
@@ -36,7 +36,6 @@ class Contact
       CSV.open("contacts.csv", "ab+") do |csv|
         csv << [name,email,phone]
       end
-      puts "Thank you! Your contact was added."
     end
     
     # Find the Contact in the 'contacts.csv' file with the matching id.
@@ -57,7 +56,7 @@ class Contact
       contacts = Contact.all
       person_data = []
       contacts.each_with_index do |contact,index|
-        if contact.name == term || contact.email == term
+        if contact.name.match(term) || contact.email.match(term)
           person_data[0] = index
           person_data[1] = contact 
         else 
