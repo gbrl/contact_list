@@ -120,8 +120,13 @@ class ContactList
     new_phone = STDIN.gets.chomp
     puts "Wanna add a secondary phone number? (leave blank for 'no')"
     second_phone = STDIN.gets.chomp
-    new_contact_response = Contact.create(new_name,new_email,new_phone,second_phone)
-    puts new_contact_response
+    new_contact_response = Contact.validate_entry(new_name,new_email,new_phone,second_phone)
+    if new_contact_response.nil?
+      puts "Sorry, that contact exists already."
+    else
+      new_id = Contact.all.length
+      puts puts "Your new entry was added. The ID is #{new_id}."
+    end
   end  
 end
 

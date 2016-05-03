@@ -34,20 +34,22 @@ class Contact
     # @param name [String] the new contact's name
     # @param email [String] the contact's email
     def create(name, email, *phones)
-      phones[1] ||= nil
-      email_duplicate = Contact.search(email)
-      if email_duplicate.length == 1 
-        CSV.open("contacts.csv", "ab+") do |csv|
+      new_id = nil
+      CSV.open("contacts.csv", "ab+") do |csv|
           csv << [name,email,phones[0],phones[1]]
-        end
-        new_id = Contact.all.length
-        response = "Your contact was added. The ID is #{new_id}."
-      else
-        response = "Sorry, this email is already in our database."
+          new_id = Contact.all.length
       end
-      response
+      new_id
     end
-    
+
+    def validate_entry(name, email, *phones)
+      phones[1] ||= nil
+      duplicate_response = Contact.search(email)
+      if duplicate_response.nil?
+        Contact.create(name, email, *phones) 
+      end
+    end
+
     # Find the Contact in the 'contacts.csv' file with the matching id.
     # @param id [Integer] the contact id
     # @return [Contact, nil] the contact with the specified id. If no contact has the id, returns nil.
