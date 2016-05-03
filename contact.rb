@@ -63,14 +63,14 @@ class Contact
     # @param term [String] the name fragment or email fragment to search for
     # @return [Array<Contact>] Array of Contact objects.
     def search(term)
+      person_data = nil
       contacts = Contact.all
-      person_data = []
       contacts.each_with_index do |contact,index|
-        if contact.name.match(term) || contact.email.match(term)
+        if (contact.name.include? term) || (contact.email.include? term)
+          person_data = []
           person_data[0] = index
           person_data[1] = contact 
-        else 
-          person_data[0] = "Sorry, we couldn't find anyone with that search term."
+          person_data
         end
       end
       person_data

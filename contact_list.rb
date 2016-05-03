@@ -75,12 +75,12 @@ class ContactList
       term = @search_term
     end
     contact = Contact.search(term)
-    if contact.length > 1
-     puts contact[1].name
-     puts contact[1].email
-     puts contact[1].phone
+    unless contact.nil?
+      puts contact[1].name
+      puts contact[1].email
+      puts contact[1].phone
     else
-      puts contact[0]
+      puts "Sorry, we couldn't find anyone with that search term."
     end
   end
 
