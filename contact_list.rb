@@ -92,11 +92,11 @@ class ContactList
 
   def new
     puts "What's the name of the new contact?"
-    new_name = gets.chomp
+    new_name = STDIN.gets.chomp
     puts "What's the email of the new contact?"
-    new_email = gets.chomp
+    new_email = STDIN.gets.chomp
     puts "What's the phone-number of the new contact?"
-    new_phone = gets.chomp
+    new_phone = STDIN.gets.chomp
     new_contact = Contact.create(new_name,new_email,new_phone)
   end  
 end
