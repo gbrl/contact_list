@@ -102,6 +102,15 @@ class ContactList
     end
   end
 
+  def self.display(id)
+    contact = Contact.find(id)
+    puts contact.name
+    puts contact.email
+    puts contact.phone
+    puts contact.second_phone unless contact.second_phone.nil?
+  end
+
+
   def list
     contacts =  Contact.all
     contacts.each_with_index do |contact,index|
@@ -116,28 +125,41 @@ class ContactList
     new_name = STDIN.gets.chomp
     puts "What's the email of the new contact?"
     new_email = STDIN.gets.chomp
-    ContactList.invalid_email unless is_a_valid_email?(new_email)
+
+    # VALIDATION
+    is_a_valid_email?(new_email)
+    is_a_unique_email?(new_email)
+    
     puts "What's the phone number of the new contact?"
     new_phone = STDIN.gets.chomp
     puts "Wanna add a secondary phone number? (leave blank for 'no')"
     second_phone = STDIN.gets.chomp
-    new_contact_response = Contact.validate_entry(new_name,new_email,new_phone,second_phone)
     if new_contact_response.nil?
       puts "Sorry, that contact exists already."
     else
       new_id = Contact.all.length
       puts puts "Your new entry was added. The ID is #{new_id}."
     end
-  end  
-
-  def self.invalid_email
-    puts "The email address you entered is invalid."
-    exit
   end
 
+  def is_a_unique_email?(email)
+    duplicate = nil
+    contacts = Contact.all
+    contacts.each_with_index do |contact,index|
+      duplicate = index if contact.email == email
+    end
+    if duplicate
+      puts "This is a duplicate entry." 
+      ContactList.display(duplicate+1)
+      exit
+    end
+  end
 
   def is_a_valid_email?(email)
-    (email =~ /\A[\w+\-.]+@[a-z\d\-]+(\.[a-z]+)*\.[a-z]+\z/i)
+    unless (email =~ /\A[\w+\-.]+@[a-z\d\-]+(\.[a-z]+)*\.[a-z]+\z/i)
+      puts "The email address you entered is invalid."
+      exit
+    end
   end
 
 end

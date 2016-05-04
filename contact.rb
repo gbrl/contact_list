@@ -43,11 +43,7 @@ class Contact
     end
 
     def validate_entry(name, email, *phones)
-      phones[1] ||= nil
-      duplicate_response = Contact.search(email)
-      if duplicate_response.nil?
-        Contact.create(name, email, *phones) 
-      end
+      Contact.create(name, email, *phones)
     end
 
     # Find the Contact in the 'contacts.csv' file with the matching id.
@@ -55,8 +51,8 @@ class Contact
     # @return [Contact, nil] the contact with the specified id. If no contact has the id, returns nil.
     def find(id)
       id = id.to_i
-      contact = nil
       contacts = Contact.all
+      contact = nil
       contact = contacts[id-1] unless contacts[id-1].nil?
     end
     
@@ -64,8 +60,8 @@ class Contact
     # @param term [String] the name fragment or email fragment to search for
     # @return [Array<Contact>] Array of Contact objects.
     def search(term)
-      person_data = nil
       contacts = Contact.all
+      person_data = nil
       contacts.each_with_index do |contact,index|
         if (contact.name.include? term) || (contact.email.include? term)
           person_data = []
@@ -75,6 +71,8 @@ class Contact
       end
       person_data
     end
+
+
 
   end
 end
