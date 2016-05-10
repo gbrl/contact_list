@@ -104,7 +104,6 @@ class ContactList
     # EMAIL UNIQUENESS VALIDATION 
     unless is_a_unique_email?(new_email)
       puts "This is a duplicate entry." 
-      ContactList.display(duplicate+1)
       exit
     end
     
