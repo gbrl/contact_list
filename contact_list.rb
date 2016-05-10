@@ -41,7 +41,8 @@ class ContactList
 
   def show
     if @id.nil?
-      puts "Which ID?"
+      list
+      puts "Which number would you like to see?"
       id = STDIN.gets.chomp.to_i
     else
       id = @id.to_i
@@ -79,7 +80,7 @@ class ContactList
   def list
     contacts = Contact.all
     contacts.each_with_index do |contact,index|
-      puts "#{index+1}: #{contact.name} (#{contact.email}) #{contact.phone_primary} #{contact.phone_secondary}"
+      puts "#{index+1}: #{contact.name} (#{contact.email})"
     end
     puts "---"
     puts "#{contacts.length} records total"
