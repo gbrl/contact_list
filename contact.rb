@@ -40,8 +40,8 @@ class Contact
   end
 
 
-  def update(id, contact)
-    Contact.connection.exec_params("UPDATE contacts SET name = $1, email = $2, phone_primary = $3, phone_secondary = $4 WHERE id = $5::int;", [contact[0].to_s, contact[1].to_s, contact[2].to_s, contact[3].to_s, id])
+  def update(id, attributes)
+    Contact.connection.exec_params("UPDATE contacts SET name = $1, email = $2, phone_primary = $3, phone_secondary = $4 WHERE id = $5::int;", [attributes[0].to_s, attributes[1].to_s, attributes[2].to_s, attributes[3].to_s, id])
   end
 
 
