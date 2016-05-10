@@ -78,8 +78,8 @@ end
     unless contact.nil?
       puts contact[1].name
       puts contact[1].email
-      puts contact[1].phone_home
-      puts contact[1].phone_cell
+      puts contact[1].phone_primary
+      puts contact[1].phone_secondary
     else
       puts "Sorry, we couldn't find anyone with that search term."
     end
@@ -98,8 +98,8 @@ end
     else
       puts contact.name
       puts contact.email
-      puts contact.phone_home
-      puts contact.phone_cell unless contact.phone_cell.nil?
+      puts contact.phone_primary
+      puts contact.phone_secondary unless contact.phone_secondary.nil?
     end
   end
 
@@ -107,13 +107,13 @@ end
     contact = Contact.find(id)
     puts contact.name
     puts contact.email
-    puts contact.phone_home
-    puts contact.phone_cell unless contact.phone_cell.nil?
+    puts contact.phone_primary
+    puts contact.phone_secondary unless contact.phone_secondary.nil?
   end
 
 
   def list
-    contacts = Contact.all
+    contacts =  Contact.all
     contacts.each_with_index do |contact,index|
       puts "#{index+1}: #{contact.name} (#{contact.email})"
     end

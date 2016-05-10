@@ -46,7 +46,8 @@ class Contact
     # @param name [String] the new contact's name
     # @param email [String] the contact's email
     def create(name, email, phone_primary, phone_secondary)
-      @@conn.exec_params('INSERT INTO contacts (name, email, phone_primary, phone_secondary) VALUES (1, $2, $3, $4) RETURNING id', [$1, $2, $3, $4]) do |results|
+      new_contact = Contact.create(name, email, phone_primary, phone_secondary)
+      @@conn.exec_params('INSERT INTO contacts (name, email, phone_primary, phone_secondary) VALUES (1, $2, $3, $4) RETURNING id', [contact.name, contact.email, contact.phone_primary, contact.phone_secondary]) do |results|
         @id = results[0]["id"]
       end
       # puts 'Closing the connection...'
