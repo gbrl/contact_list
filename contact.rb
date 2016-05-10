@@ -1,12 +1,10 @@
 require 'csv'
 require 'pp'
 require 'pg'
+require_relative 'validation'
 
-# Represents a person in an address book.
-# The ContactList class will work with Contact objects instead of interacting with the CSV file directly
 class Contact
-
-  attr_accessor :name, :email, :phone_primary, :phone_secondary
+  attr_accessor :id, :name, :email, :phone_primary, :phone_secondary
   
   def initialize(name,email,phone_primary,phone_secondary,id=nil)
     @id              = id
@@ -16,33 +14,41 @@ class Contact
     @phone_secondary = phone_secondary
   end
 
+
   def self.connection
     PG.connect(
     host: 'ec2-54-163-230-90.compute-1.amazonaws.com',
     dbname: 'd74a2i8lmqp2et',
     user: 'ucmocwstzaxduv',
-    password: 'wfx8En3oykmS2__gOkW7j_zLBG'
-    )
+    password: 'wfx8En3oykmS2__gOkW7j_zLBG')
   end
+
 
   def self.all 
     all_contacts = []
-    puts 'Finding contacts...'
+    puts 'Working...'
     query_results = Contact.connection.exec('SELECT * FROM contacts;')
-    Contact.connection.close
-
     query_results.each do |contact|
-      all_contacts << Contact.new(contact["name"], contact["email"], contact["phone_primary"], contact["phone_secondary"])
+      all_contacts << Contact.new(contact["name"], contact["email"], contact["phone_primary"], contact["phone_secondary"], contact["id"])
     end
     all_contacts
   end
 
-  def self.create(name, email, phone_primary, phone_secondary)
-    Contact.connection.exec_params('INSERT INTO contacts (name, email, phone_primary, phone_secondary) VALUES (1, $2, $3, $4) RETURNING id', [contact.name, contact.email, contact.phone_primary, contact.phone_secondary]) do |results|
-      @id = results[0]["id"]
-    end
-    Contact.connection.close
+
+  def save
+    Contact.connection.exec_params('INSERT INTO contacts (name, email, phone_primary, phone_secondary) VALUES ($1, $2, $3, $4) RETURNING id', [@name, @email, @phone_primary, @phone_secondary])
   end
+
+
+  def update(id, contact)
+    Contact.connection.exec_params("UPDATE contacts SET name = $1, email = $2, phone_primary = $3, phone_secondary = $4 WHERE id = $5::int;", [contact[0].to_s, contact[1].to_s, contact[2].to_s, contact[3].to_s, id])
+  end
+
+
+  def destroy(id)
+    results = Contact.connection.exec_params('DELETE FROM contacts WHERE id = $1::int;', [id])
+  end
+
 
   def self.validate_entry(name, email, phone_primary, phone_secondary)
     Contact.create(name, email, phone_primary, phone_secondary)
@@ -50,40 +56,32 @@ class Contact
 
 
   def self.find(id)
-    results = Contact.connection.exec_params('SELECT * FROM contacts WHERE id = $1;', [id])
-    Contact.connection.close
-    contact = results[0]
-    contact = Contact.new(contact["name"],contact["email"],contact["phone_primary"],contact["phone_primary"])
-  end
-  
-
-  def self.find_by_email(email)
-    results = Contact.connection.exec_params('SELECT * FROM contacts WHERE email = $1;', [email])
-    Contact.connection.close
-    contact = results[0]
-    contact = Contact.new(contact["name"],contact["email"],contact["phone_primary"],contact["phone_primary"])
-  end
-  
-
-  def self.find_by_name(name)
-    results = Contact.connection.exec_params('SELECT * FROM contacts WHERE name = $1;', [name])
-    Contact.connection.close
-    contact = results[0]
-    contact = Contact.new(contact["name"],contact["email"],contact["phone_primary"],contact["phone_primary"])
+    results = Contact.connection.exec_params('SELECT * FROM contacts WHERE id = $1::int;', [id])
+    unless results.num_tuples.zero?
+      contact = results[0]
+      contact = Contact.new(contact["name"],contact["email"],contact["phone_primary"],contact["phone_primary"])
+      contact.id = id
+      contact
+    else
+      return
+    end
   end
   
 
   def self.search(term)
-    contacts = Contact.all
-    person_data = nil
-    contacts.each_with_index do |contact,index|
-      if (contact.name.include? term) || (contact.email.include? term)
-        person_data = []
-        person_data[0] = index
-        person_data[1] = contact 
-      end
+    if is_a_valid_email?(term)
+      results = Contact.connection.exec_params('SELECT * FROM contacts WHERE email = $1 ;', [term])
+    elsif term.is_a? Integer
+      results = Contact.connection.exec_params('SELECT * FROM contacts WHERE id = $1 ;', [term])
+    else
+      results = Contact.connection.exec_params('SELECT * FROM contacts WHERE name LIKE (\'%\' || $1 || \'%\');', [term])
     end
-    person_data
+    unless results.num_tuples.zero?
+      contact = results[0]
+      contact = Contact.new(contact["name"],contact["email"],contact["phone_primary"],contact["phone_primary"])
+    else
+      puts "No contact found."
+    end
   end
 
 end
