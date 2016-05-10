@@ -80,7 +80,7 @@ class Contact
       contact = results[0]
       contact = Contact.new(contact["name"],contact["email"],contact["phone_primary"],contact["phone_primary"])
     else
-      puts "No contact found."
+      puts "No pre-existing records found in database..."
     end
   end
 
