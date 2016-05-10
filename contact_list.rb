@@ -172,7 +172,7 @@ def list_actions
   puts "#{green('list')}      - List all contacts"
   puts "#{green('new')}       - Create a new contact"
   puts "#{green('show')}      - Show a contact"
-  puts "#{green('delete')}    - Delete a contact"
+  puts "#{green('destroy')}   - Delete a contact"
   puts "#{green('update')}    - Update a contact"
   puts "#{green('search')}    - Search for a contact"
 end
@@ -185,7 +185,7 @@ def get_action_name
     new
   when "list"
     list
-  when "delete"
+  when "destroy"
     delete
   when "update"
     update
