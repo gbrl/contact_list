@@ -70,10 +70,12 @@ class ContactList
 
 
   def update
+    list
     puts "What's the ID of the contact?"
-    id = STDIN.gets.chomp
-    contact = Contact.find(id)
-    contact.update(id, collect_info) if contact
+    id = STDIN.gets.chomp.to_i
+    contacts = Contact.all
+    contact = contacts[id - 1]
+    contact.update(contact.id, collect_info) if contact
   end
 
 
