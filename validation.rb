@@ -1,6 +1,5 @@
 def is_a_unique_email?(thing)
   contact = Contact.search(thing)
-  puts contact
   contact.nil?
 end
 
