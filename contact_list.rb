@@ -1,6 +1,5 @@
 require 'pp'
 require 'pry'
-require 'csv'
 require 'active_support/all'
 require_relative 'contact'
 require_relative 'color'
@@ -39,6 +38,7 @@ class ContactList
       get_action_name
     end
   end
+end
 
   def list_actions
     puts "Welcome to your Contact List Manager."
@@ -78,7 +78,8 @@ class ContactList
     unless contact.nil?
       puts contact[1].name
       puts contact[1].email
-      puts contact[1].phone
+      puts contact[1].phone_home
+      puts contact[1].phone_cell
     else
       puts "Sorry, we couldn't find anyone with that search term."
     end
@@ -97,8 +98,8 @@ class ContactList
     else
       puts contact.name
       puts contact.email
-      puts contact.phone
-      puts contact.second_phone unless contact.second_phone.nil?
+      puts contact.phone_home
+      puts contact.phone_cell unless contact.phone_cell.nil?
     end
   end
 
@@ -106,13 +107,13 @@ class ContactList
     contact = Contact.find(id)
     puts contact.name
     puts contact.email
-    puts contact.phone
-    puts contact.second_phone unless contact.second_phone.nil?
+    puts contact.phone_home
+    puts contact.phone_cell unless contact.phone_cell.nil?
   end
 
 
   def list
-    contacts =  Contact.all
+    contacts = Contact.all
     contacts.each_with_index do |contact,index|
       puts "#{index+1}: #{contact.name} (#{contact.email})"
     end
@@ -130,7 +131,7 @@ class ContactList
     is_a_valid_email?(new_email)
     is_a_unique_email?(new_email)
     
-    puts "What's the phone number of the new contact?"
+    puts "What's the primary phone number of the new contact?"
     new_phone = STDIN.gets.chomp
     puts "Wanna add a secondary phone number? (leave blank for 'no')"
     second_phone = STDIN.gets.chomp
@@ -162,6 +163,5 @@ class ContactList
     end
   end
 
-end
 
 process_input(ARGV)
