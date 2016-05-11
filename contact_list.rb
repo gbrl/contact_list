@@ -3,12 +3,11 @@ require 'pry'
 require 'active_support/all'
 require_relative 'contact'
 require_relative 'color'
-require_relative 'validation'
 
 class ContactList
 
   def initialize(action,id,search_term)
-    if action.length > 0
+    if action.respond_to?(:length) && action.length > 0
       @id = id
       @search_term = search_term
       send(action)
@@ -26,15 +25,14 @@ class ContactList
     else
       term = @search_term
     end
-    puts "Searching for #{term}..."
-    contact = Contact.search(term)
-    unless contact.nil?
-      puts contact.name
-      puts contact.email
-      puts contact.phone_primary
-      puts contact.phone_secondary
+    results = Contact.search(term)
+    if results == 'none' || results == []
+      puts "Sorry, we couldn't find anything."
     else
-      puts "Sorry, we couldn't find anyone with that search term."
+      results.each do |person|
+        display(person)
+        puts "-------------"
+      end
     end
   end
 
@@ -51,16 +49,12 @@ class ContactList
     if contact.nil?
       puts "Sorry, we couldn't find that person."
     else
-      puts contact.name
-      puts contact.email
-      puts contact.phone_primary
-      puts contact.phone_secondary unless contact.phone_secondary.empty?
+      display(contact)
     end
   end
 
-
-  def self.display(id)
-    contact = Contact.find(id)
+  def display(contact)
+    contact = contact[0] if contact.respond_to?(:length)
     puts contact.name
     puts contact.email
     puts contact.phone_primary
@@ -68,11 +62,20 @@ class ContactList
   end
 
 
+  def get_db_id(id)
+    contacts = Contact.all
+    db_id = contacts[id-1].id
+  end
+
   def update
+    list
     puts "What's the ID of the contact?"
-    id = STDIN.gets.chomp
-    contact = Contact.find(id)
-    contact.update(id, collect_info) if contact
+    id = STDIN.gets.chomp.to_i
+    db_id = get_db_id(id)
+    contact = Contact.find(db_id)
+    pp contact
+    params = collect_info
+    contact.update(name: params[0], email: params[1], phone_primary: params[2], phone_secondary: params[3]) if contact
   end
 
 
@@ -94,20 +97,6 @@ class ContactList
     puts "What's the email of the contact?"
     new_email = STDIN.gets.chomp
     info << new_email
-
-    # EMAIL FORMAT VALIDATION
-    unless is_a_valid_email?(new_email)
-      puts "The email address is invalid"
-      exit
-    end
-
-    # EMAIL UNIQUENESS VALIDATION 
-    unless is_a_unique_email?(new_email)
-      puts "This is a duplicate entry." 
-      ContactList.display(duplicate+1)
-      exit
-    end
-    
     puts "What's the primary phone number of the contact?"
     new_phone = STDIN.gets.chomp
     info << new_phone
@@ -118,6 +107,13 @@ class ContactList
   end
 
 
+  def dump
+    contacts = Contact.all
+    contacts.each do |c|
+      pp c
+    end
+  end
+
   def delete
     list
     puts "What's the number of the record you want to delete?"
@@ -125,7 +121,7 @@ class ContactList
     contacts = Contact.all
     contact_to_be_destroyed = contacts[contact_position - 1]
     id = contact_to_be_destroyed.id
-    contact_to_be_destroyed.destroy(id)
+    contact_to_be_destroyed.destroy
     puts "Contact deleted."
     list
   end
@@ -133,9 +129,8 @@ class ContactList
 
   def new
     info = collect_info
-    new_contact = Contact.new(info[0],info[1],info[2],info[3])
-    new_contact.save
-    new_id = Contact.all.length
+    new_contact = Contact.create(name: info[0], email: info[1], phone_primary: info[2], phone_secondary: info[3])
+    new_id = Contact.last.id
     puts puts "Your new entry was added. The ID is #{new_id}."
   end
 end
@@ -195,6 +190,8 @@ def get_action_name
     show
   when "search"
     search
+  when "dump"
+    dump
   else
     puts "Sorry, we didn't understand your command. Please try again."
   end
