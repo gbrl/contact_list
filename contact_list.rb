@@ -73,7 +73,6 @@ class ContactList
     id = STDIN.gets.chomp.to_i
     db_id = get_db_id(id)
     contact = Contact.find(db_id)
-    pp contact
     params = collect_info
     contact.update(name: params[0], email: params[1], phone_primary: params[2], phone_secondary: params[3]) if contact
   end
